@@ -1,13 +1,28 @@
 import { defineConfig, type HeadConfig } from 'vitepress'
 import brands from '../data/brands.json'
 
+// 搜索引擎站长平台所有权验证（由站长从对应平台获取后填入此对象）
+// 若为空字符串则安全略过，绝不编造虚假验证码；若填入则在最终静态 HTML <head> 中原生输出
+export const SEARCH_ENGINE_VERIFICATION = {
+  google: '',  // 示例: google-site-verification
+  bing: '',    // 示例: msvalidate.01
+  shenma: '',  // 示例: shenma-site-verification
+  baidu: ''    // 示例: baidu-site-verification
+}
+
 export default defineConfig({
   title: 'TAG 博客',
   description: 'TAG 博客 (tagblog.world) - 专注高端网络可观测性评测、IEPL/IPLC 专线机场推荐与科学上网技术知识库',
   lang: 'zh-CN',
   cleanUrls: true,
   sitemap: {
-    hostname: 'https://tagblog.world'
+    hostname: 'https://tagblog.world',
+    transformItems(items) {
+      return items.filter(item =>
+        !item.url.includes('Preventive_SEO_Audit_Report') &&
+        !item.url.includes('404')
+      )
+    }
   },
   transformHead: async (context) => {
     const { pageData } = context
@@ -21,12 +36,23 @@ export default defineConfig({
       canonical = `https://tagblog.world/${path.slice(0, -3)}`
     }
 
+    const pageTitle = pageData.title ? `${pageData.title} | TAG 博客` : 'TAG 博客 - 科学上网与网络可观测性评测'
+    const pageDesc = pageData.description || 'TAG 博客 (tagblog.world) - 专注高端网络可观测性评测、IEPL/IPLC 专线机场推荐与出海网络工程知识库'
+    const isInternalReport = path.includes('Preventive_SEO_Audit_Report') || path.includes('404')
+
     const tags: HeadConfig[] = [
       ['link', { rel: 'canonical', href: canonical }],
-      ['meta', { property: 'og:url', content: canonical }]
+      ['meta', { property: 'og:url', content: canonical }],
+      ['meta', { property: 'og:title', content: pageTitle }],
+      ['meta', { property: 'og:description', content: pageDesc }],
+      ['meta', { name: 'twitter:title', content: pageTitle }],
+      ['meta', { name: 'twitter:description', content: pageDesc }],
+      ['meta', { name: 'robots', content: isInternalReport ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' }],
+      ['meta', { property: 'article:published_time', content: '2026-01-15T08:00:00+08:00' }],
+      ['meta', { property: 'article:modified_time', content: '2026-11-10T18:00:00+08:00' }]
     ]
 
-    // 1. Homepage Schema (WebSite & Organization)
+    // 1. 首页专属 Schema (WebSite & Organization)
     if (path === 'index.md') {
       const siteSchema = {
         '@context': 'https://schema.org',
@@ -38,6 +64,11 @@ export default defineConfig({
             'name': 'TAG 博客',
             'description': 'TAG 博客 - 专注高端网络可观测性评测、IEPL/IPLC 专线机场推荐与科学上网技术知识库',
             'inLanguage': 'zh-CN',
+            'potentialAction': {
+              '@type': 'SearchAction',
+              'target': 'https://tagblog.world/?s={search_term_string}',
+              'query-input': 'required name=search_term_string'
+            },
             'publisher': {
               '@type': 'Organization',
               'name': 'TAG 博客',
@@ -47,12 +78,20 @@ export default defineConfig({
                 'url': 'https://tagblog.world/assets/avatar.webp'
               }
             }
+          },
+          {
+            '@type': 'Organization',
+            '@id': 'https://tagblog.world/#organization',
+            'name': 'TAG 博客网络实验室',
+            'url': 'https://tagblog.world/',
+            'logo': 'https://tagblog.world/assets/avatar.webp',
+            'sameAs': ['https://tagblog.world']
           }
         ]
       }
       tags.push(['script', { type: 'application/ld+json' }, JSON.stringify(siteSchema)])
     }
-    // 2. Brand Review Pages Schema Injection
+    // 2. 42 家机场评测页面专属 Schema (TechArticle + Product + Review + FAQPage + BreadcrumbList)
     else if (path.startsWith('reviews/') && path.endsWith('.md') && !path.endsWith('/index.md')) {
       const slug = path.replace(/^reviews\//, '').replace(/\.md$/, '')
       const brand = brands.find(b => b.slug === slug)
@@ -132,14 +171,38 @@ export default defineConfig({
                   }
                 }
               ]
+            },
+            {
+              '@type': 'BreadcrumbList',
+              '@id': `${canonical}#breadcrumb`,
+              'itemListElement': [
+                {
+                  '@type': 'ListItem',
+                  'position': 1,
+                  'name': '首页',
+                  'item': 'https://tagblog.world/'
+                },
+                {
+                  '@type': 'ListItem',
+                  'position': 2,
+                  'name': '42 家机场评测库',
+                  'item': 'https://tagblog.world/reviews/'
+                },
+                {
+                  '@type': 'ListItem',
+                  'position': 3,
+                  'name': `${brand.name} 深度评测`,
+                  'item': canonical
+                }
+              ]
             }
           ]
         }
         tags.push(['script', { type: 'application/ld+json' }, JSON.stringify(schema)])
       }
     }
-    // 3. All other content pages (Hubs, Protocols, Clients, Unlock, About)
-    else if (!path.includes('404')) {
+    // 3. 全站其他核心栏目与专题页 (TechArticle + BreadcrumbList)
+    else if (!isInternalReport) {
       const pageSchema = {
         '@context': 'https://schema.org',
         '@graph': [
@@ -164,6 +227,24 @@ export default defineConfig({
                 'url': 'https://tagblog.world/assets/avatar.webp'
               }
             }
+          },
+          {
+            '@type': 'BreadcrumbList',
+            '@id': `${canonical}#breadcrumb`,
+            'itemListElement': [
+              {
+                '@type': 'ListItem',
+                'position': 1,
+                'name': '首页',
+                'item': 'https://tagblog.world/'
+              },
+              {
+                '@type': 'ListItem',
+                'position': 2,
+                'name': pageData.title || '技术知识库',
+                'item': canonical
+              }
+            ]
           }
         ]
       }
@@ -174,12 +255,22 @@ export default defineConfig({
   },
   head: [
     ['link', { rel: 'icon', href: '/assets/avatar.webp' }],
+    ['meta', { name: 'viewport', content: 'width=device-width, initial-scale=1.0' }],
     ['meta', { name: 'keywords', content: 'TAG博客, 机场推荐, 42家机场推荐, 42家深度机场评测, 免费节点, 机场FAQ, 跑路预警, 免费试用, IEPL专线, 光速云, 暮光加速, 飞猫云, 微风网络, Clash Verge, Shadowrocket' }],
     ['meta', { name: 'author', content: 'TAG 博客网络实验室' }],
     ['meta', { property: 'og:site_name', content: 'TAG 博客' }],
     ['meta', { property: 'og:type', content: 'website' }],
-    ['meta', { property: 'og:locale', content: 'zh_CN' }]
-  ],
+    ['meta', { property: 'og:locale', content: 'zh_CN' }],
+    ['meta', { property: 'og:image', content: 'https://tagblog.world/assets/avatar.webp' }],
+    ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+    ['meta', { name: 'twitter:image', content: 'https://tagblog.world/assets/avatar.webp' }],
+    ['meta', { name: 'format-detection', content: 'telephone=no' }],
+    // 搜索引擎站长平台所有权验证（预留接入位，填入后直接编译进最终 HTML head 中）
+    ...(SEARCH_ENGINE_VERIFICATION.google ? [['meta', { name: 'google-site-verification', content: SEARCH_ENGINE_VERIFICATION.google }]] : []),
+    ...(SEARCH_ENGINE_VERIFICATION.bing ? [['meta', { name: 'msvalidate.01', content: SEARCH_ENGINE_VERIFICATION.bing }]] : []),
+    ...(SEARCH_ENGINE_VERIFICATION.shenma ? [['meta', { name: 'shenma-site-verification', content: SEARCH_ENGINE_VERIFICATION.shenma }]] : []),
+    ...(SEARCH_ENGINE_VERIFICATION.baidu ? [['meta', { name: 'baidu-site-verification', content: SEARCH_ENGINE_VERIFICATION.baidu }]] : [])
+  ] as HeadConfig[],
   themeConfig: {
     logo: '/assets/avatar.webp',
     siteTitle: 'TAG 博客',

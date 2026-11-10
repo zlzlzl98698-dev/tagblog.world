@@ -1,3 +1,13 @@
+---
+layout: doc
+title: TAG 博客技术审计报告 (内部归档)
+description: TAG 博客全站高级预防性 SEO 与 GEO 深度审计诊断报告内部归档文件
+head:
+  - - meta
+    - name: robots
+      content: noindex, nofollow
+---
+
 # TAG 博客 (tagblog.world) 全站高级预防性 SEO 与 GEO 深度审计诊断报告
 
 > **审计执行角色**：搜索引擎抓取算法工程师 / 技术 SEO 审计师 / 内容质量风控算法研究员  

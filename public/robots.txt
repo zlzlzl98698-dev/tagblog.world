@@ -1,4 +1,32 @@
+# robots.txt for https://tagblog.world/
+# 遵循 Google Search Central、Bing Webmaster、Baiduspider 及 yisouspider 爬虫抓取协议
+
 User-agent: *
 Allow: /
 
+# 明确支持主流搜索引擎爬虫
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: bingbot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: yisouspider
+Allow: /
+
+User-agent: Sogouspider
+Allow: /
+
+# 禁止抓取内部数据源与临时缓存目录
+Disallow: /data/
+Disallow: /scripts/
+Disallow: /.vitepress/
+
+# XML Sitemap 声明（绝对路径）
 Sitemap: https://tagblog.world/sitemap.xml

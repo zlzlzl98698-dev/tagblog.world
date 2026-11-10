@@ -1,23 +1,36 @@
+# Apache 静态站点路由与 SEO 规范化配置
+# 适用于 https://tagblog.world/
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
-  # SPA 路由降级支持 (VitePress cleanUrls 友好重写)
+
+  # 1. 强制 HTTPS 301 永久重定向（杜绝 HTTP/HTTPS 权重分散）
+  RewriteCond %{HTTPS} off
+  RewriteRule ^(.*)$ https://tagblog.world/$1 [R=301,L]
+
+  # 2. 强制 WWW 裸域名 301 永久重定向（统一为 https://tagblog.world/）
+  RewriteCond %{HTTP_HOST} ^www\.tagblog\.world$ [NC]
+  RewriteRule ^(.*)$ https://tagblog.world/$1 [R=301,L]
+
+  # 3. VitePress cleanUrls 友好路由重写 (支持直接访问无 .html 后缀的纯净 URL)
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteCond %{REQUEST_FILENAME}.html -f
   RewriteRule ^(.*)$ $1.html [L]
-  
+
+  # 4. 404 兜底路由
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule ^(.*)$ /index.html [L]
+  RewriteRule ^(.*)$ /404.html [L]
 </IfModule>
 
-# Gzip / Brotli 静态压缩加速
+# Gzip / Deflate 静态资源极速压缩 (提升爬虫抓取效率与 LCP)
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application/javascript application/json image/svg+xml
 </IfModule>
 
-# 静态资源长期缓存与安全头部
+# 静态资源长期缓存与爬虫友好头
 <IfModule mod_headers.c>
   <FilesMatch "\.(jpg|jpeg|png|gif|svg|webp|ico|woff2|woff|ttf)$">
     Header set Cache-Control "max-age=31536000, public, immutable"
