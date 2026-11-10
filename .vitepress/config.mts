@@ -15,6 +15,8 @@ export default defineConfig({
   description: 'TAG 博客 (tagblog.world) - 专注高端网络可观测性评测、IEPL/IPLC 专线机场推荐与科学上网技术知识库',
   lang: 'zh-CN',
   cleanUrls: true,
+  srcExclude: ['README.md', 'Preventive_SEO_Audit_Report.md'],
+  ignoreDeadLinks: true,
   sitemap: {
     hostname: 'https://tagblog.world',
     transformItems(items) {

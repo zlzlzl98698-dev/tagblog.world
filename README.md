@@ -10,7 +10,7 @@
 [![Vue 3](https://img.shields.io/badge/Vue-3.5-42b883?style=for-the-badge&logo=vuedotjs&logoColor=white)](https://vuejs.org/)
 [![SEO Health Score](https://img.shields.io/badge/SEO_Score-98%2F100_A%2B-brightgreen?style=for-the-badge&logo=google)](https://tagblog.world/sitemap.xml)
 [![Schema.org](https://img.shields.io/badge/Schema.org-JSON--LD_98.6%25-orange?style=for-the-badge&logo=schema)](https://schema.org)
-[![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](./LICENSE)
+[![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](https://github.com/zlzlzl98698-dev/tagblog.world/blob/main/LICENSE)
 
 <p align="center">
   <a href="https://tagblog.world/">🌐 访问官网</a> •
@@ -43,7 +43,7 @@
 
 ### 2. 📊 42 家品牌知识库与多维实时筛选器
 - 覆盖 **光速云 (TOP 1 主推旗舰)**、**暮光加速**、**飞猫云**、**微风网络**、**大佬云**、**WgetCloud** 等 42 家主流与特色机场。
-- 内置 [`BrandFilter.vue`](./.vitepress/theme/components/BrandFilter.vue) 客户端搜索引擎，支持按价格区间（平价 5.6 元/月至高端专线）、线路架构（IEPL / IPLC / BGP）、协议（VLESS / Shadowsocks / Trojan）多标签秒级筛选。
+- 内置 `BrandFilter.vue` 客户端搜索引擎，支持按价格区间（平价 5.6 元/月至高端专线）、线路架构（IEPL / IPLC / BGP）、协议（VLESS / Shadowsocks / Trojan）多标签秒级筛选。
 
 ### 3. 🐝 六大万字级蜂巢专题知识矩阵
 | 专题名称 | 路由路径 | 核心定位与覆盖内容 |
@@ -151,7 +151,7 @@ npm run docs:preview
 项目打包生成的 `.vitepress/dist` 为纯静态文件，可无缝部署至任何静态托管空间或 VPS：
 
 ### Apache 部署
-产物根目录下已内置 [`.htaccess`](./public/.htaccess)，支持：
+产物根目录下已内置 `.htaccess`，支持：
 - `cleanUrls` 伪静态无扩展名路由映射；
 - 强制 HTTP 301 跳转至 HTTPS；
 - 强制 `www.tagblog.world` 301 跳转至裸域名；
@@ -200,7 +200,7 @@ server {
 
 ## 📈 搜索引擎提交与验证指南
 
-站长可通过修改 [`.vitepress/config.mts`](./.vitepress/config.mts) 中的 `SEARCH_ENGINE_VERIFICATION` 对象快速注入站长平台验证代码：
+站长可通过修改 `.vitepress/config.mts` 中的 `SEARCH_ENGINE_VERIFICATION` 对象快速注入站长平台验证代码：
 
 ```typescript
 export const SEARCH_ENGINE_VERIFICATION = {
@@ -221,7 +221,7 @@ export const SEARCH_ENGINE_VERIFICATION = {
 
 ## 📄 开源许可证
 
-本项目基于 [MIT License](./LICENSE) 协议开源。
+本项目基于 [MIT License](https://github.com/zlzlzl98698-dev/tagblog.world/blob/main/LICENSE) 协议开源。
 
 ---
 
