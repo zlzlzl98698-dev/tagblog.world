@@ -1,0 +1,28 @@
+{
+  "name": "tagblog.world",
+  "version": "1.0.0",
+  "description": "TAG 博客 - 专注高端网络可观测性评测、IEPL/IPLC 专线机场推荐与科学上网技术知识库",
+  "main": "index.js",
+  "scripts": {
+    "docs:dev": "vitepress dev",
+    "docs:build": "vitepress build",
+    "docs:preview": "vitepress preview"
+  },
+  "keywords": [
+    "TAG博客",
+    "tagblog",
+    "机场推荐",
+    "IEPL专线",
+    "IPLC专线",
+    "科学上网",
+    "Clash",
+    "V2Ray",
+    "Shadowrocket",
+    "ChatGPT网络优化"
+  ],
+  "author": "TAG Blog Laboratory",
+  "license": "MIT",
+  "devDependencies": {
+    "vitepress": "^1.6.3"
+  }
+}
